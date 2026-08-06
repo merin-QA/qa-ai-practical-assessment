@@ -23,10 +23,10 @@
     "focusField": "Password",
     "sampleInput": "a",
     "expectedRules": [
-      "8+ characters",
+      "at least 8 characters",
       "uppercase and lowercase",
-      "number",
-      "special character"
+      "at least one number",
+      "special"
     ]
   },
   "validUser": {

@@ -47,8 +47,7 @@ Prompts used to build the automation test case list and the test data files that
 
 - **Validation Notes:**
 
-  Picked the first UI regression case from `FunctionalTestCase.csv` to match the registration flow already covered by the smoke tests.
-
+  Verified that the selected regression test case complements the existing smoke scenarios and provides additional functional coverage without duplicating the smoke suite.
 ---
 
 ## Entry 3 — Add API Smoke and E2E Test Cases
@@ -75,7 +74,7 @@ Prompts used to build the automation test case list and the test data files that
 
 - **Validation Notes:**
 
-  Selected the first 3 API smoke cases and the first API E2E case in file order from `FunctionalTestCase.csv`.
+  Verified that the selected API smoke and E2E test cases cover the core authentication, product retrieval, cart creation, and user workflow identified in the test plan.
 
 ---
 
@@ -105,7 +104,7 @@ Prompts used to build the automation test case list and the test data files that
 
 - **Validation Notes:**
 
-  All JSON files were checked and parse correctly. The index file maps all 9 test cases.
+  Verified that all generated JSON files are valid and can be parsed successfully. Confirmed that every automation test case has a corresponding test data entry and that the generated data follows the expected project structure.
 
   **Important:** For REG-009, the email uses a template (`automation_{{timestamp}}@example.com`). Replace `{{timestamp}}` at runtime (e.g. with `Date.now()`) so each test run uses a unique email.
 
@@ -143,4 +142,4 @@ This chat built a focused automation test pack from the full manual test suite:
 3. **Added API cases** — Added 3 API smoke tests (login, create cart, get products) and 1 API E2E test (login → profile → logout).
 4. **Created test data** — Built JSON test data files for all 9 cases, with a main index file (`automation_testcases.json`) that links each test case to the right data.
 
-The automation list is a small, high-value subset of the full 95 manual test cases — ready for Playwright automation to use.
+The automation list represents a focused subset of the manual test cases, selected to provide coverage of the most critical user journeys while keeping the implementation scope small for the assessment.

@@ -4,9 +4,13 @@
   "private": true,
   "scripts": {
     "test": "playwright test",
-    "test:api": "playwright test tests/API",
-    "test:api:smoke": "playwright test tests/API --grep @smoke",
-    "test:api:regression": "playwright test tests/API --grep @regression"
+    "test:api": "playwright test --project api",
+    "test:api:smoke": "playwright test --project api --grep @smoke",
+    "test:api:regression": "playwright test --project api --grep @regression",
+    "test:api:e2e": "playwright test --project api --grep @e2e",
+    "test:ui": "playwright test --project ui",
+    "test:ui:smoke": "playwright test --project ui --grep @smoke",
+    "test:ui:regression": "playwright test --project ui --grep @regression"
   },
   "devDependencies": {
     "@playwright/test": "^1.51.0",
