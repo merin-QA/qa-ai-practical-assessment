@@ -1,0 +1,69 @@
+---
+description: Risk-based test prioritization from risk_analysis.md for test design and coverage
+globs: tests/**,**/testdata/**,test_plan.md
+alwaysApply: false
+---
+
+# Risk-Based Testing Priorities
+
+Use `risk_analysis.md` after `Application_Context.md` and `requirements_document.md` to decide **what to test first** and **how deeply**.
+
+## Effort Allocation
+
+| Risk Level | Effort | Focus |
+|------------|--------|-------|
+| **High** | ~50–60% | Security, payments, order integrity, RBAC |
+| **Medium** | ~30–35% | Complex logic, integrations, catalog/rentals |
+| **Low** | ~10–15% | Smoke and regression on non-critical paths |
+
+## High-Risk Areas (test first)
+
+1. Authentication, JWT, account locking, route guards
+2. TOTP and social login (Google OAuth)
+3. Registration, forgot/change password
+4. Cart & checkout (guest and authenticated E2E)
+5. Payment methods and validation (all 5 types)
+6. Discounts (geo, combination, location offer)
+7. Invoices, PDF download, data isolation (IDOR)
+8. Admin user and order management
+9. RBAC across `/admin`, `/account`, favorites, invoices
+
+## Cross-Cutting Scenarios
+
+Prioritize integrated scenarios from `risk_analysis.md`:
+
+- Guest checkout with combination discount + gift card payment
+- TOTP-enabled user completing checkout via chat widget
+- Admin disables user mid-checkout
+- Geo-discount + rental in same cart
+- API order creation bypassing UI validation
+- Cross-user invoice access attempts
+
+## Test Design Rules
+
+Follow `test-case-standards.mdc` for full priority, suite type, and traceability rules.
+
+### Risk → Test Priority
+
+| Risk (`risk_analysis.md`) | Test Priority | Tag |
+|---------------------------|---------------|-----|
+| High | **P1** | `@p1` |
+| Medium | **P2** | `@p2` |
+| Low | **P3** | `@p3` |
+
+### Risk → Suite Type Guidance
+
+| Risk | Smoke | Regression | E2E |
+|------|-------|------------|-----|
+| **High** | Critical happy paths only | Validation, negative paths, API contract | Full purchase/auth/admin journeys |
+| **Medium** | Key feature loads / 200 responses | AC coverage, edge cases | Cross-feature flows where applicable |
+| **Low** | Page loads, selector visible | Full AC regression | Rarely needed |
+
+### Traceability & Coverage
+
+- Map each test to at least one `REQ-*` ID from `requirements_document.md` (title + annotation)
+- For **P1 / High-risk**: cover UI **and** API where applicable
+- For **P2 / Medium**: smoke first (`@smoke`), then regression depth (`@regression`)
+- For **P3 / Low**: smoke + targeted regression; E2E only if part of a broader journey
+- Cross-cutting scenarios (§ Cross-Cutting High-Risk Scenarios) → always **P1** + **@e2e**
+- Use default test accounts from `Application_Context.md` §2; respect account-specific rules (TOTP denial, admin lock exemption)

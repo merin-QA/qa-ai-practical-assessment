@@ -1,0 +1,59 @@
+---
+description: QA source document hierarchy — Application_Context first, then requirements and risk analysis
+alwaysApply: true
+---
+
+# QA Source Document Reference Order
+
+When planning, writing, reviewing, or debugging tests for the Practice Software Testing Toolshop, consult project source documents in this strict order:
+
+## 1. Application_Context.md (PRIMARY — read first)
+
+Always start here. It is the single source of truth for:
+
+- Application overview, user types, roles, and default test accounts
+- Business rules, workflows, and acceptance criteria (Sprint 1–5)
+- API endpoints, auth model, and environment URLs
+- Feature behavior, edge cases, and cross-cutting flows
+
+Do not infer application behavior from tests or code alone when this document covers the topic.
+
+## 2. requirements_document.md (SECONDARY — traceability)
+
+Use after Application_Context to:
+
+- Map work to requirement IDs (`REQ-S*`, `REQ-BR-*`, `REQ-RBAC-*`, `REQ-API-*`)
+- Confirm testable acceptance criteria and expected outcomes
+- Maintain bidirectional traceability between tests and requirements
+
+Prefer `requirements_document.md` for IDs; use `.csv` or `.xlsx` for bulk filtering and reporting.
+
+### Requirement → Test Case Mapping (mandatory)
+
+When creating or reviewing a test case:
+
+1. **Locate** the requirement row by module + AC title in `requirements_document.md` or `.csv`
+2. **Copy** the exact `REQ-*` ID into the test title and Playwright `annotation`
+3. **Assign** priority (`P1`/`P2`/`P3`) from `risk_analysis.md` for that feature area
+4. **Classify** suite type (`@smoke`, `@regression`, `@e2e`) per `test-case-standards.mdc`
+5. **Verify** the REQ ID exists — never invent or guess IDs
+
+See `test-case-standards.mdc` for title format, tags, and coverage checklist.
+
+## 3. risk_analysis.md (TERTIARY — prioritization)
+
+Use after context and requirements are understood to:
+
+- Prioritize High → Medium → Low risk features
+- Focus effort on security, payments, checkout, discounts, invoices, and RBAC
+- Apply cross-cutting high-risk scenarios from the risk matrix
+
+Risk analysis informs **priority and depth**; it does not override documented behavior in Application_Context or requirements.
+
+## Conflict Resolution
+
+If documents disagree, follow this precedence:
+
+**Application_Context.md** → **requirements_document** → **risk_analysis.md**
+
+Flag ambiguities rather than guessing.

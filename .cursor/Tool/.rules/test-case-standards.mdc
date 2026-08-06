@@ -1,0 +1,139 @@
+---
+description: Test case priority, suite type (smoke/regression/E2E), and requirement traceability standards
+globs: tests/**,**/testdata/**,test_plan.md
+alwaysApply: false
+---
+
+# Test Case Standards — Priority, Type & Requirement Mapping
+
+Every automated test case **must** declare **priority**, **suite type**, and at least one **requirement ID** from `requirements_document.md`.
+
+## 1. Test Priority
+
+Derive priority from `risk_analysis.md`. Map risk level to test priority:
+
+| Priority | Risk Level | When to Use | Execution Order |
+|----------|------------|-------------|-----------------|
+| **P1** | High | Auth, payments, checkout, discounts, invoices, RBAC, admin user/order mgmt | Run first |
+| **P2** | Medium | Catalog, rentals, profile, favorites, chat, APIs, admin CRUD | Run second |
+| **P3** | Low | i18n, privacy, contact form, comparison, cosmetic/UX | Run last |
+
+- Every **P1** test must have at least one matching `REQ-*` ID.
+- Cross-cutting scenarios from `risk_analysis.md` § Cross-Cutting High-Risk Scenarios are always **P1** and **E2E**.
+
+## 2. Test Suite Type
+
+Assign **one primary** suite type per test. Add secondary tags only when the test legitimately belongs to multiple suites.
+
+| Type | Tag | Purpose | Typical Scope | Run Frequency |
+|------|-----|---------|---------------|---------------|
+| **Smoke** | `@smoke` | Fast critical-path sanity | Happy path only; 1–3 steps per feature area | Every build / PR |
+| **Regression** | `@regression` | Feature-depth & validation | Individual ACs, edge cases, negative paths, API contract | Nightly / release |
+| **E2E** | `@e2e` | Multi-module user journeys | Full workflows spanning 2+ modules (e.g. browse → cart → checkout → invoice) | Nightly / pre-release |
+
+### Classification Rules
+
+- **Smoke** — Can the app ship if this fails? If yes → not smoke. Examples: login, product grid load, add to cart, guest checkout happy path, `POST /users/login`, `GET /products`.
+- **Regression** — Single-feature or single-endpoint validation. Examples: search min/max length, payment field validation, account locking after 3 attempts, gift card 422 response.
+- **E2E** — End-to-end journey across modules. Examples: authenticated purchase with PDF download, guest checkout + combination discount, TOTP login during checkout, chat widget checkout.
+
+### API Coverage Tiers (from `requirements_document.md` §2)
+
+| API Tier | Maps To | Tag |
+|----------|---------|-----|
+| Smoke (8 endpoints) | Critical-path API checks | `@smoke` `@api` |
+| Regression (28 public) | Full public contract | `@regression` `@api` |
+| Regression Auth (24) | Customer token / 401 / owner-only | `@regression` `@api` |
+| Regression Admin (27) | Admin CRUD / 403 for customers | `@regression` `@api` |
+
+Layer tag: add `@ui` or `@api` alongside suite tags.
+
+## 3. Requirement Mapping
+
+### Source of Truth
+
+| Document | Use For |
+|----------|---------|
+| `requirements_document.md` | Requirement IDs (`REQ-S*`, `REQ-BR-*`, `REQ-RBAC-*`, `REQ-API-*`) |
+| `requirements_document.csv` | Bulk lookup, filtering, coverage reports |
+| `Application_Context.md` | Behavior context when AC text is ambiguous |
+
+### ID Prefixes
+
+| Prefix | Example | Maps To |
+|--------|---------|---------|
+| `REQ-S{n}-` | `REQ-S5-PO-001` | Sprint user-story acceptance criterion |
+| `REQ-BR-` | `REQ-BR-012` | Business rule (§4) |
+| `REQ-RBAC-` | `REQ-RBAC-003` | Role-based access rule (§2) |
+| `REQ-API-` | `REQ-API-PRD-001` | REST API endpoint coverage (§6) |
+
+### Mapping Workflow (required before writing a test)
+
+1. Read feature behavior in `Application_Context.md`.
+2. Find the matching row(s) in `requirements_document.md` or `.csv` by module and AC title.
+3. Confirm priority from `risk_analysis.md` for that feature area.
+4. Choose suite type (smoke / regression / E2E) per §2 above.
+5. Embed the `REQ-*` ID(s) in the test — never invent IDs.
+
+### Traceability Rules
+
+- **One test → one or more REQ IDs.** Multi-REQ allowed for E2E journeys; list all covered IDs.
+- **One REQ → one or more tests** allowed (smoke + regression + negative variants).
+- Prefer **Sprint 5** IDs (`REQ-S5-*`) for current-platform UI tests unless testing a specific sprint environment.
+- API tests map to `REQ-API-*`; business-rule validations map to `REQ-BR-*`; access-control tests map to `REQ-RBAC-*`.
+
+## 4. Playwright Conventions
+
+### Test Title Format
+
+```
+[REQ-S5-PO-001] [P1] [Smoke] Product grid is displayed on home page
+```
+
+Order: **Requirement ID** → **Priority** → **Suite Type** → **Human-readable title**
+
+### Tags & Annotations
+
+```typescript
+test('[REQ-S5-PO-001] [P1] [Smoke] Product grid is displayed', {
+  tag: ['@smoke', '@p1', '@ui'],
+  annotation: [
+    { type: 'requirement', description: 'REQ-S5-PO-001' },
+    { type: 'priority', description: 'P1' },
+    { type: 'suite', description: 'smoke' },
+  ],
+}, async ({ page }) => {
+  // ...
+});
+```
+
+### Describe-Block Grouping
+
+Group tests by module and requirement prefix:
+
+```typescript
+test.describe('Product Overview @regression', () => {
+  test.describe('REQ-S5-PO', () => {
+    // tests for REQ-S5-PO-001 through REQ-S5-PO-013
+  });
+});
+```
+
+### Running by Tag
+
+```bash
+npx playwright test --grep @smoke
+npx playwright test --grep "@regression|@e2e"
+npx playwright test --grep @p1
+npx playwright test --grep "REQ-S5-CC-CART"
+```
+
+## 5. Coverage Checklist
+
+Before merging new tests, verify:
+
+- [ ] At least one `REQ-*` ID per test (in title or annotation)
+- [ ] Priority (`P1`/`P2`/`P3`) matches `risk_analysis.md` for the feature
+- [ ] Suite type tag (`@smoke`, `@regression`, or `@e2e`) is set
+- [ ] Layer tag (`@ui` or `@api`) is set
+- [ ] REQ ID exists in `requirements_document.md` or `.csv`

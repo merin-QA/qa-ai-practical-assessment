@@ -1,0 +1,65 @@
+---
+description: Playwright Prism Framework structure and conventions for API, UI, and test code
+globs: tests/**,API/**,UI/**,playwright.config.ts,.env*
+alwaysApply: false
+---
+
+# Playwright Prism Framework Architecture
+
+Follow the project layout defined in `README.md`. Do not introduce new top-level folders or patterns unless explicitly requested.
+
+## Top-Level Structure
+
+| Folder / File | Purpose |
+|---------------|---------|
+| `API/` | API page objects, endpoints, headers, body data, test data, utilities |
+| `UI/` | UI page objects, locators, page functions, resources, utilities |
+| `tests/` | API and UI test specs and execution steps |
+| `playwright.config.ts` | Projects, browsers, directories, timeouts |
+| `.env` | Base URLs, credentials, and environment-specific values |
+
+## API Layer (`API/`)
+
+- **pageobjects/** — Endpoints, headers, request/response body definitions
+- **testdata/** — Common API responses, `login.json`, `api_request.log`
+- **utilities/** — Reuse existing helpers:
+  - `apiHelper` — GET, POST, PUT, PATCH, DELETE
+  - `createDynamicData` — store and reuse API responses across steps
+  - `excelReader` / `excelWriter` — Excel ↔ JSON
+  - `logger`, `requestToCurlLogger`, `storeFullAPIResponse`
+
+## UI Layer (`UI/`)
+
+- **pageobjects/** — Locators and page-level actions
+- **resources/** — `testdata/`, `images/`, `pdfs/`
+- **utilities/** — `commonutils`, `databaseManager`
+
+## Tests (`tests/`)
+
+- Separate **API** and **UI** test files
+- Use page objects and utilities; avoid duplicating locator or endpoint logic in specs
+- Follow `test-case-standards.mdc` for **priority**, **suite type**, and **requirement mapping**
+
+### Test Metadata (required per test)
+
+| Field | Values | Source |
+|-------|--------|--------|
+| **Priority** | `P1`, `P2`, `P3` | `risk_analysis.md` (High → P1, Medium → P2, Low → P3) |
+| **Suite type** | `@smoke`, `@regression`, `@e2e` | See `test-case-standards.mdc` §2 |
+| **Layer** | `@ui`, `@api` | Test implementation layer |
+| **Requirement** | `REQ-S*`, `REQ-BR-*`, `REQ-RBAC-*`, `REQ-API-*` | `requirements_document.md` / `.csv` |
+
+**Title format:** `[REQ-S5-PO-001] [P1] [Smoke] Product grid is displayed`
+
+**Tags:** `['@smoke', '@p1', '@ui']` plus `annotation` with `requirement`, `priority`, and `suite` types.
+
+## Before Writing Code
+
+1. Read `Application_Context.md` for the feature under test
+2. Map to `REQ-*` ID(s) in `requirements_document.md` (verify in `.csv` if needed)
+3. Assign priority from `risk_analysis.md` and suite type per `test-case-standards.mdc`
+4. Place new code in the correct layer (page object vs utility vs spec)
+
+## Credentials & URLs
+
+Use default accounts from `Application_Context.md` §2 via `.env` — never hardcode secrets in test files.
