@@ -142,8 +142,8 @@ Tests are organized into two Playwright **projects** (`api` and `ui`) and tagged
 ### API and UI tests (both)
 
 ```bash
-npm test                                    # All API + UI tests
-npx playwright test                         # Same as above
+
+npx playwright test                         # All API + UI tests
 npx playwright test --project api --project ui   # Explicit: run both projects
 npx playwright test --grep @smoke             # Smoke tests across API and UI
 npx playwright test --grep @regression        # Regression tests across API and UI

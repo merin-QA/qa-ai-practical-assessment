@@ -796,36 +796,7 @@ On this assessment we stopped at **9 automated cases** out of 95 manual — that
 | **Phase 4 — Expand** | Week 4+ | Add regression and E2E automation for P1 flows; add JSON test data; wire dynamic data (unique emails, tokens) | Growing automated suite tied to manual case IDs |
 | **Ongoing** | Every sprint | Update context doc when features change; re-run risk on new stories; record AI prompts; peer-review P1 test changes | Docs and tests stay in sync with the product |
 
-### What changes in a real project vs this assessment
 
-| This assessment | Real project |
-|-----------------|--------------|
-| Public practice app with known test accounts | **Staging** environment + secrets manager (not `.env` in chat) |
-| Solo work with Cursor | **Team**: QA writes/reviews, devs add `data-test` hooks, CI owns the pipeline |
-| `FunctionalTestCase.md` + Excel | Test management tool (Jira, TestRail, Zephyr, Xray) |
-| 95 manual / 9 automated | Ratio grows over time — aim for **all smoke + critical P1** automated first |
-| `.cursor/Tool/.rules/` in repo | Team **Cursor rules** or coding standards doc — same idea, shared conventions |
-| `ai-prompts/` folder | Same audit pattern; optional link to ticket ID per prompt |
-
-### CI gates (example)
-
-Wire automation where it gives the most value — **fast feedback on PRs**, deeper checks overnight.
-
-| Stage | When it runs | Example command | Goal |
-|-------|--------------|-----------------|------|
-| **PR** | Every pull request | `npm run test:api:smoke && npm run test:ui:smoke` | Block merge if core paths break (&lt; 10 min) |
-| **Nightly** | Scheduled | `npx playwright test --grep @regression` | Catch regressions across features |
-| **Pre-release** | Before deploy | `npx playwright test` | Full automated sign-off on staging |
-| **Post-deploy smoke** | After production deploy (optional) | Tagged smoke against production URLs | Sanity check only — read-only, no destructive tests |
-
-### Roles: who does what
-
-| Role | Responsibility |
-|------|----------------|
-| **QA engineer** | Owns context doc, requirements traceability, manual design, automation scope, validation on staging, sign-off |
-| **AI (Cursor)** | Drafts docs, test cases, code, and debug suggestions — never approves alone |
-| **Developer** | Stable `data-test` attributes, fixes bugs found by tests, reviews automation PRs |
-| **Team lead / PO** | Confirms risk priorities and which journeys are release-critical |
 
 ### Practices that transfer directly from this repo
 
@@ -835,17 +806,6 @@ Wire automation where it gives the most value — **fast feedback on PRs**, deep
 4. **Run on the real system early** — first automation pass will fail; that is normal (see [Section 10](#10-debugging-failing-tests-and-interpreting-logs-using-ai)).
 5. **Keep secrets out of prompts** — use `.env` and fixtures locally (see [Section 11](#11-information-to-avoid-sharing-with-ai)).
 6. **Log what you asked AI** — `ai-prompts/` or ticket comments so audits and handovers are possible.
-
-### Common mistakes to avoid
-
-| Mistake | Better approach |
-|---------|-----------------|
-| Automate everything on day one | Smoke + P1 first; expand each sprint |
-| Trust AI locators or payloads without running tests | Always execute against staging before merge |
-| Skip manual tests and go straight to code | Manual cases define expected behaviour and traceability |
-| No single context doc | One place for “how the app works” — update it every sprint |
-| Paste production credentials into chat | Staging accounts + secrets manager + redacted logs |
-| No traceability | Every test names a `REQ-*` or story ID |
 
 ### Success criteria (how you know it is working)
 
