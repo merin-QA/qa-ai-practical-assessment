@@ -1,0 +1,115 @@
+{
+  "source": "Automation_testcases.xlsx",
+  "testCases": {
+    "FunctionalTestCase-REG-001": {
+      "testCaseId": "FunctionalTestCase-REG-001",
+      "module": "User Registration",
+      "suiteType": "Smoke",
+      "layer": "ui",
+      "dataFile": "UI/resources/testdata/registration.json",
+      "dataKey": "formDisplayVerification",
+      "preconditions": "User is not logged in"
+    },
+    "FunctionalTestCase-REG-009": {
+      "testCaseId": "FunctionalTestCase-REG-009",
+      "module": "User Registration",
+      "suiteType": "Smoke",
+      "layer": "ui",
+      "dataFile": "UI/resources/testdata/registration.json",
+      "dataKey": "validUser",
+      "preconditions": "User not logged in; unique email available",
+      "notes": "Replace {{timestamp}} in emailTemplate at runtime to avoid duplicate email errors."
+    },
+    "FunctionalTestCase-LOGIN-001": {
+      "testCaseId": "FunctionalTestCase-LOGIN-001",
+      "module": "User Login",
+      "suiteType": "Smoke",
+      "layer": "ui",
+      "dataFile": "UI/resources/testdata/login.json",
+      "dataKey": "formDisplayVerification",
+      "preconditions": "User not logged in"
+    },
+    "FunctionalTestCase-LOGIN-002": {
+      "testCaseId": "FunctionalTestCase-LOGIN-002",
+      "module": "User Login",
+      "suiteType": "Smoke",
+      "layer": "ui",
+      "dataFile": "UI/resources/testdata/login.json",
+      "dataKey": "customer",
+      "preconditions": "User not logged in"
+    },
+    "FunctionalTestCase-REG-002": {
+      "testCaseId": "FunctionalTestCase-REG-002",
+      "module": "User Registration",
+      "suiteType": "Regression",
+      "layer": "ui",
+      "dataFile": "UI/resources/testdata/registration.json",
+      "dataKey": "passwordRequirements",
+      "preconditions": "User is on registration page"
+    },
+    "FunctionalTestCase-API-AUTH-001": {
+      "testCaseId": "FunctionalTestCase-API-AUTH-001",
+      "module": "API User Authentication",
+      "suiteType": "Smoke",
+      "layer": "api",
+      "dataFile": "API/testdata/login.json",
+      "dataKey": "customer",
+      "endpoint": "/users/login",
+      "expectedStatus": 200,
+      "expectedResponseFields": ["access_token", "token_type", "expires_in"],
+      "expectedTokenType": "bearer"
+    },
+    "FunctionalTestCase-API-CART-001": {
+      "testCaseId": "FunctionalTestCase-API-CART-001",
+      "module": "API Cart Creation",
+      "suiteType": "Smoke",
+      "layer": "api",
+      "dataFile": "API/testdata/cart.json",
+      "dataKey": "createCart",
+      "endpoint": "/carts"
+    },
+    "FunctionalTestCase-API-PRD-001": {
+      "testCaseId": "FunctionalTestCase-API-PRD-001",
+      "module": "API Product Selection",
+      "suiteType": "Smoke",
+      "layer": "api",
+      "dataFile": "API/testdata/products.json",
+      "dataKey": "listProducts",
+      "endpoint": "/products"
+    },
+    "FunctionalTestCase-API-AUTH-011": {
+      "testCaseId": "FunctionalTestCase-API-AUTH-011",
+      "module": "API User Authentication",
+      "suiteType": "E2E",
+      "layer": "api",
+      "dataFile": "API/testdata/login.json",
+      "dataKey": "customer",
+      "flow": [
+        {
+          "step": 1,
+          "method": "POST",
+          "endpoint": "/users/login",
+          "payloadKey": "customer",
+          "expectedStatus": 200,
+          "extract": "access_token"
+        },
+        {
+          "step": 2,
+          "method": "GET",
+          "endpoint": "/users/me",
+          "auth": "Bearer",
+          "expectedStatus": 200,
+          "assertProfileEmailFrom": "customer.email"
+        },
+        {
+          "step": 3,
+          "method": "GET",
+          "endpoint": "/users/logout",
+          "auth": "Bearer",
+          "expectedStatus": 200,
+          "expectedMessage": "Successfully logged out"
+        }
+      ]
+    }
+  }
+}

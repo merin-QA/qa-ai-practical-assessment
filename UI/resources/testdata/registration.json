@@ -1,0 +1,64 @@
+{
+  "paths": {
+    "register": "/auth/register",
+    "login": "/auth/login"
+  },
+  "formDisplayVerification": {
+    "requiredFields": [
+      "First name",
+      "Last name",
+      "DOB",
+      "Street",
+      "Postal code",
+      "City",
+      "State",
+      "Country",
+      "Phone",
+      "Email",
+      "Password"
+    ],
+    "submitButtonLabel": "Register"
+  },
+  "passwordRequirements": {
+    "focusField": "Password",
+    "sampleInput": "a",
+    "expectedRules": [
+      "8+ characters",
+      "uppercase and lowercase",
+      "number",
+      "special character"
+    ]
+  },
+  "validUser": {
+    "firstName": "Automation",
+    "lastName": "Tester",
+    "dob": "1990-05-15",
+    "street": "123 Main Street",
+    "postalCode": "12345",
+    "city": "New York",
+    "state": "NY",
+    "country": "United States",
+    "phone": "5551234567",
+    "emailTemplate": "automation_{{timestamp}}@example.com",
+    "password": "Welcome@123"
+  },
+  "validUserApiPayload": {
+    "first_name": "Automation",
+    "last_name": "Tester",
+    "dob": "1990-05-15",
+    "street": "123 Main Street",
+    "postal_code": "12345",
+    "city": "New York",
+    "state": "NY",
+    "country": "United States",
+    "phone": "5551234567",
+    "emailTemplate": "automation_{{timestamp}}@example.com",
+    "password": "Welcome@123"
+  },
+  "expectedOutcomes": {
+    "successfulRegistration": {
+      "redirectPath": "/auth/login",
+      "confirmationMessageContains": "Registration successful"
+    }
+  }
+}

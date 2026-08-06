@@ -1,0 +1,19 @@
+{
+  "paths": {
+    "login": "/auth/login",
+    "account": "/account"
+  },
+  "formDisplayVerification": {
+    "fields": ["Email", "Password"],
+    "buttons": ["Sign in with Google", "Sign in"]
+  },
+  "customer": {
+    "email": "customer@practicesoftwaretesting.com",
+    "password": "welcome01"
+  },
+  "expectedOutcomes": {
+    "successfulCustomerLogin": {
+      "redirectPath": "/account"
+    }
+  }
+}

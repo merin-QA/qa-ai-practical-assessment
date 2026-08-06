@@ -1,0 +1,7 @@
+{
+  "createCart": {
+    "requestBody": {},
+    "expectedStatus": 201,
+    "expectedResponseFields": ["id"]
+  }
+}

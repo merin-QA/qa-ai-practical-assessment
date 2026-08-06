@@ -1,0 +1,7 @@
+{
+  "listProducts": {
+    "requestBody": null,
+    "expectedStatus": 200,
+    "expectedProductFields": ["id", "name", "price", "in_stock"]
+  }
+}

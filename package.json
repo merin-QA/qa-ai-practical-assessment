@@ -1,0 +1,17 @@
+{
+  "name": "qa-ai-practical-assessment",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "playwright test",
+    "test:api": "playwright test tests/API",
+    "test:api:smoke": "playwright test tests/API --grep @smoke",
+    "test:api:regression": "playwright test tests/API --grep @regression"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.51.0",
+    "@types/node": "^22.13.10",
+    "dotenv": "^16.4.7",
+    "typescript": "^5.8.2"
+  }
+}
