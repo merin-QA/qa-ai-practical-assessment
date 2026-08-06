@@ -61,7 +61,7 @@ cp .env.example .env
 | `ADMIN_EMAIL` | Default admin account email | See `Application_Context.md` |
 | `ADMIN_PASSWORD` | Default admin account password | See `Application_Context.md` |
 
-> **Note:** `.env` is loaded automatically via `dotenv` in `playwright.config.ts`. Do not commit `.env` to version control.
+> **Note:** `.env` is loaded automatically via `dotenv` in `playwright.config.ts`. Do not commit `.env` to version control. Credential defaults are also available in `API/testdata/login.json` and `UI/resources/testdata/login.json`.
 
 ---
 
@@ -122,6 +122,8 @@ qa-ai-practical-assessment/
 |------|-------|----------|
 | Customer | `CUSTOMER_EMAIL` | `CUSTOMER_PASSWORD` |
 | Admin | `ADMIN_EMAIL` | `ADMIN_PASSWORD` |
+
+Defaults are in `.env.example`; see `Application_Context.md` for the full account list.
 
 ---
 
