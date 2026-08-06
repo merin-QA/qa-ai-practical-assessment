@@ -4,159 +4,158 @@ Prompts used to consolidate project deliverables, record AI workflow documentati
 
 ---
 
-## Entry 1 — Create Documentation and Summary Prompt Log
+## Entry 1 — README: Framework, Setup, Test Data, and Run Commands
 
 - **Prompt:**
 
   ```
-  create ai-prompts/documentation-and-summary.md
+  update the readme.md , it should contain What framework is used , How to run it ,where is test data and other fields required to run automation or manual test cases. Include different test (Smoke ,Regression) command to run Where the final reports are generated
   ```
 
 - **AI Response Summary:**
 
-  Created this file as the fifth prompt log in `ai-prompts/`, alongside:
+  Reviewed the project configuration (`package.json`, `playwright.config.ts`, `.env.example`, test specs, and test data folders) and replaced the outdated README with a structured guide covering:
 
-  | File | Phase |
-  |------|-------|
-  | `requirements-and-planning.md` | Application context, requirements, risk analysis, test plan |
-  | `test-design.md` | Manual test case design (UI and API) |
-  | `test-data.md` | Automation test case selection and test data |
-  | `automation-and-debugging.md` | Playwright automation, debugging, suite alignment |
-  | `documentation-and-summary.md` | Deliverables index and assessment summary (this file) |
+  - Framework stack (Playwright + TypeScript) and application URLs
+  - Prerequisites and installation steps
+  - Environment variables required for automation
+  - Project structure (`API/`, `UI/`, `test-results/`)
+  - Automation test data locations (`API/testdata/`, `UI/resources/testdata/`)
+  - Manual test case document locations (`FunctionalTestCase.md`, `.csv`, `.xlsx`, `Application_Context.md`, etc.)
+  - npm scripts for all, API, and UI suites — including smoke, regression, and E2E tags
+  - Report output location (`test-results/html-report/`) and how to open the HTML report
+  - Manual testing workflow and troubleshooting tips
 
-  Added a cross-phase **Assessment Summary** below so reviewers can see scope, traceability, and automation status without opening every artifact.
+- **Edits You Made:**
 
-- **Validation Notes:**
+  - Rewrote `README.md` from a legacy “PlayWright Prism Framework” outline into a complete onboarding and execution guide aligned with the current repo layout.
+  - Removed references to non-existent paths (`tests/`, `allure-results/`) and utilities not present in the project.
+  - Added tables for environment variables, test data files, suite tags, run commands, and report outputs.
+  - Documented default test accounts and links to manual test artifacts.
 
-  Confirmed the file follows the same entry structure as other `ai-prompts/*.md` files (Prompt → AI Response Summary → Validation Notes). Verified automation counts against `API/testdata/automation_testcases.json` and `Automation_testcases.xlsx` (9 selected cases). API suite verified: **4/4 passing** (`npm run test:api`). UI suite requires `npx playwright install` before local runs when browsers are not cached.
+- **Reason for Edits (clarity, correctness, tone):**
 
----
-
-## Assessment Summary
-
-### Application Under Test
-
-| Item | Value |
-|------|-------|
-| **Web app** | [Practice Software Testing Toolshop](https://practicesoftwaretesting.com) |
-| **API** | [https://api.practicesoftwaretesting.com](https://api.practicesoftwaretesting.com) |
-| **Framework** | Playwright Prism (API + UI layers, POM, JSON test data) |
-| **Primary context** | `Application_Context.md` |
-
-### Planning & Design Deliverables
-
-| Artifact | Purpose | Scale |
-|----------|---------|-------|
-| `Application_Context.md` | App overview, workflows, Sprint 1–5 ACs, API reference | Single source of truth |
-| `requirements_document.md` / `.csv` / `.xlsx` | Requirement IDs and acceptance sources | 440 requirements |
-| `risk_analysis.md` | Feature risk levels and test focus | High / Medium / Low matrix |
-| `FunctionalTestCase.md` / `.csv` / `.xlsx` | Manual UI and API test cases | 95 cases |
-| `Automation_testcases.xlsx` | Focused subset selected for automation | 9 cases |
-
-### Automation Coverage (Automation_testcases.xlsx)
-
-| Layer | Suite | Count | Test Case IDs | Spec files |
-|-------|-------|:-----:|---------------|------------|
-| UI | Smoke | 4 | REG-001, REG-009, LOGIN-001, LOGIN-002 | `UI/tests/registration.spec.ts`, `UI/tests/login.spec.ts` |
-| UI | Regression | 1 | REG-002 | `UI/tests/registration.spec.ts` |
-| API | Smoke | 3 | API-AUTH-001, API-CART-001, API-PRD-001 | `API/tests/authentication.spec.ts`, `cart.spec.ts`, `products.spec.ts` |
-| API | E2E | 1 | API-AUTH-011 | `API/tests/authentication.spec.ts` |
-| **Total** | | **9** | | **5 spec files** |
-
-### Traceability Chain
-
-```
-Official docs / OpenAPI
-        ↓
-Application_Context.md
-        ↓
-requirements_document (REQ-* IDs)
-        ↓
-FunctionalTestCase (manual cases + REQ mapping)
-        ↓
-Automation_testcases.xlsx (focused subset)
-        ↓
-automation_testcases.json + layer test data JSON
-        ↓
-Playwright specs (annotations + @smoke / @regression / @e2e tags)
-```
-
-### Framework Layout (Automated Tests)
-
-| Layer | Tests | Page objects / helpers | Test data |
-|-------|-------|------------------------|-----------|
-| **API** | `API/tests/` | `API/pageobjects/`, `API/utilities/` | `API/testdata/` |
-| **UI** | `UI/tests/` | `UI/pageobjects/`, `UI/utilities/` | `UI/resources/testdata/` |
-
-**Config:** `playwright.config.ts` — `api` project (`testDir: ./API/tests`), `ui` project (`testDir: ./UI/tests`, `testIdAttribute: data-test`).
-
-### NPM Scripts
-
-| Command | What it runs |
-|---------|----------------|
-| `npm run test` | All projects |
-| `npm run test:api` | API project (4 tests) |
-| `npm run test:api:smoke` | API smoke (`@smoke`) |
-| `npm run test:api:e2e` | API E2E (`@e2e`) |
-| `npm run test:ui` | UI project (5 tests) |
-| `npm run test:ui:smoke` | UI smoke (`@smoke`) |
-| `npm run test:ui:regression` | UI regression (`@regression`) |
-
-### Environment Setup
-
-Copy `.env.example` to `.env` and set:
-
-- `API_BASE_URL`, `UI_BASE_URL`
-- `CUSTOMER_EMAIL`, `CUSTOMER_PASSWORD` (and admin credentials if needed)
-
-Install and run:
-
-```bash
-npm install
-npx playwright install    # required for UI tests
-npm run test:api
-npm run test:ui
-```
-
-HTML report: `test-results/html-report/index.html` (after a test run).
-
-### Key Debugging Learnings (from automation phase)
-
-| Topic | Finding |
-|-------|---------|
-| UI locators | Site uses `data-test`, not `data-testid` — set `testIdAttribute: 'data-test'` in config |
-| Registration | Country label is `"United States of America (the)"`; password must be unique (leak check rejects static passwords) |
-| Login session | `nav-sign-out` is hidden in dropdown; assert URL + hidden `nav-sign-in` + visible `nav-menu` |
-| API duplicate email | Live API returns **409** for duplicate register, not **422** as some manual cases assumed |
-| Suite scope | API specs trimmed to match `Automation_testcases.xlsx` only (4 tests) |
-
-### Known Configuration Notes
-
-- HTML reporter folder (`test-results/html-report`) overlaps Playwright's `test-results` output folder — non-blocking warning; consider moving report to `playwright-report` in a future cleanup.
-- UI tests need Playwright browsers installed (`npx playwright install`).
+  - **Clarity:** Organized content into scannable sections with tables and copy-paste commands so a new contributor can set up and run tests without digging through the codebase.
+  - **Correctness:** Verified paths, npm scripts, tags (`@smoke`, `@regression`, `@e2e`), and report folder against `playwright.config.ts` and `package.json` so instructions match the actual project.
+  - **Tone:** Used direct, professional technical writing suitable for a QA assessment deliverable rather than internal framework notes.
 
 ---
 
-## Output Files (Documentation Phase)
+## Entry 2 — README: Checkout Assessment Branch
 
-| File | Purpose |
-|------|---------|
-| `ai-prompts/documentation-and-summary.md` | This file — prompt log and assessment summary |
-| `ai-prompts/requirements-and-planning.md` | Planning-phase prompts |
-| `ai-prompts/test-design.md` | Test design prompts |
-| `ai-prompts/test-data.md` | Test data and automation selection prompts |
-| `ai-prompts/automation-and-debugging.md` | Automation and debugging prompts |
-| `README.md` | Framework structure and Playwright CLI reference |
+- **Prompt:**
+
+  ```
+  update the branch to checkout assessment
+
+  in @README.md update checkout assessment
+  ```
+
+- **AI Response Summary:**
+
+  Checked available Git branches (`git branch -a`) and found the working branch is named `assesment` on `origin`. Updated the **Installation** section in `README.md` to:
+
+  1. Clone from `https://github.com/merin-QA/qa-ai-practical-assessment.git`
+  2. Run `git checkout assesment` after cloning
+  3. Provide an alternative one-step clone: `git clone -b assesment <repo-url>`
+
+  Noted that the branch name in the repository is `assesment` (single “s”), not `assessment`, so checkout commands remain functional.
+
+- **Edits You Made:**
+
+  - Replaced the generic `git clone <repository-url>` placeholder with the actual remote URL.
+  - Added `git checkout assesment` to the standard install flow.
+  - Added a second code block showing direct branch clone via `git clone -b assesment`.
+
+- **Reason for Edits (clarity, correctness, tone):**
+
+  - **Clarity:** Gave explicit clone-and-checkout steps so assessors land on the correct branch on first setup.
+  - **Correctness:** Used the real branch name `assesment` from `git branch -a` instead of the user’s spelling `assessment`, preventing a failed checkout.
+  - **Tone:** Kept install instructions concise and procedural, consistent with the rest of the README.
 
 ---
 
-## Chat Summary (Simple Language)
+## Entry 3 — Chat Summary for Documentation Log
 
-This file closes the documentation loop for the QA AI practical assessment:
+- **Prompt:**
 
-1. **Five prompt logs** — Each major phase (planning, design, test data, automation, documentation) has a dedicated `ai-prompts/*.md` file recording what was asked, what AI produced, and how it was validated.
-2. **Focused automation** — From 95 manual cases, 9 were selected in `Automation_testcases.xlsx` and implemented as 9 Playwright tests (5 UI + 4 API counting E2E separately from smoke).
-3. **Traceability** — Every automated test maps to requirement IDs (`REQ-*`) and manual test case IDs (`FunctionalTestCase-*`) via titles, tags, and Playwright annotations.
-4. **Runnable suite** — API tests pass against the live API; UI tests follow POM in `UI/pageobjects/` and need browser install on a fresh machine.
+  ```
+  add the chat summary in @ai-prompts/documentation-and-summary.md  For each entry: - Prompt: - AI Response Summary: - Edits You Made: - Reason for Edits (clarity, correctness, tone)
+  ```
 
-For phase-specific prompt history and debugging detail, see the other four files in `ai-prompts/`.
+- **AI Response Summary:**
+
+  Recorded this session’s documentation work in `ai-prompts/documentation-and-summary.md` using the requested four-field format. Entries cover the README overhaul (Entry 1), assessment branch checkout update (Entry 2), and this summary task (Entry 3).
+
+- **Edits You Made:**
+
+  - Populated `ai-prompts/documentation-and-summary.md` with three structured entries documenting prompts, outcomes, file changes, and rationale.
+
+- **Reason for Edits (clarity, correctness, tone):**
+
+  - **Clarity:** Mirrors the entry format used in other `ai-prompts/` logs so assessment reviewers can trace what was asked, what was delivered, and why.
+  - **Correctness:** Summaries reflect actual file changes (`README.md`) and verified Git branch names.
+  - **Tone:** Neutral, audit-friendly language focused on deliverables rather than conversational filler.
+
+---
+
+## Entry 4 — README: Run API and UI Tests Together
+
+- **Prompt:**
+
+  ```
+  in readme add a command to run both api and ui cases
+  ```
+
+- **AI Response Summary:**
+
+  Expanded the **Running Tests** section in `README.md` by renaming “All tests” to **API and UI tests (both)** and documenting commands to execute both Playwright projects in a single run:
+
+  - `npm test` / `npx playwright test` — runs all API and UI specs
+  - `npx playwright test --project api --project ui` — explicit dual-project command
+  - `npx playwright test --grep @smoke` — smoke suite across both layers
+  - `npx playwright test --grep @regression` — regression suite across both layers
+
+- **Edits You Made:**
+
+  - Updated `README.md` **Running Tests** section with a dedicated **API and UI tests (both)** subsection and four copy-paste commands with inline comments.
+
+- **Reason for Edits (clarity, correctness, tone):**
+
+  - **Clarity:** Makes it obvious that `npm test` covers both projects and provides an explicit `--project api --project ui` alternative for readers who want an unambiguous combined run.
+  - **Correctness:** Commands align with `playwright.config.ts` projects (`api`, `ui`) and existing tag conventions (`@smoke`, `@regression`).
+  - **Tone:** Kept command blocks consistent with the API-only and UI-only sections already in the README.
+
+---
+
+## Entry 5 — README: HTML Report Path After Playwright Config Fix
+
+- **Prompt:**
+
+  ```
+  fix this
+  ```
+
+  *(Context: `npm test` surfaced a Playwright warning that `test-results/html-report` clashed with `test-results`. User requested the fix; README was updated to match the new report location.)*
+
+- **AI Response Summary:**
+
+  After resolving the HTML reporter path conflict in `playwright.config.ts` (moving output from `test-results/html-report` to `playwright-report`), updated `README.md` so documentation matches the config:
+
+  - **Project structure** — split `test-results/` (failure artifacts) and `playwright-report/` (HTML report) in the folder tree
+  - **Test Reports** — table and commands now point to `playwright-report/` and `npx playwright show-report` (no path argument needed)
+  - **Configuration Reference** — reporter line updated to `html` (output: `playwright-report`)
+
+- **Edits You Made:**
+
+  - Updated `README.md` project structure, Test Reports section, and Configuration Reference to replace all `test-results/html-report` references with `playwright-report`.
+  - Simplified the show-report command from `npx playwright show-report test-results/html-report` to `npx playwright show-report`.
+
+- **Reason for Edits (clarity, correctness, tone):**
+
+  - **Clarity:** Separates artifact output (`test-results/`) from the HTML report (`playwright-report/`) so readers know where to find each after a run.
+  - **Correctness:** Aligns README with the fixed `playwright.config.ts` reporter setting so setup and troubleshooting instructions do not reference a removed path.
+  - **Tone:** Minimal, factual updates consistent with existing README tables and command blocks.
+
+---
+
