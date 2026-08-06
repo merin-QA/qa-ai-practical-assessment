@@ -431,3 +431,88 @@ Prompts used for automation structure, assertions, and analyzing failures/logs.
 | Final API status | 4/4 passing (`npm run test:api`) |
 
 **Key takeaway:** Keep the API suite scoped to `Automation_testcases.xlsx` via `automation_testcases.json`. Pre-existing regression tests outside that file can drift from live API behavior (e.g. 409 vs 422). Use `npm run test:api:smoke`, `test:api:e2e`, or `test:api` to run the aligned four-test suite.
+
+---
+
+## Entry 13 — Fix HTML Reporter Path Conflict
+
+- **Prompt:**
+
+  ```
+  npm test
+  ```
+
+  *(Follow-up:)*
+
+  ```
+  fix this
+  ```
+
+  *(Referring to the Playwright configuration warning: HTML reporter output folder clashes with the tests output folder.)*
+
+- **AI Response Summary:**
+
+  Ran `npm test` — **9/9 passed** (~7.4s), but Playwright emitted a non-blocking configuration warning:
+
+  - **HTML reporter folder:** `test-results/html-report`
+  - **Test results folder:** `test-results`
+
+  The HTML reporter clears its output directory before generation, which can delete failure artifacts (screenshots, traces) stored under `test-results/`.
+
+  **Fix applied in `playwright.config.ts`:**
+
+  ```typescript
+  reporter: [['list'], ['html', { open: 'never', outputFolder: 'playwright-report' }]],
+  ```
+
+  Moved the HTML report to Playwright’s default `playwright-report/` folder, separate from `test-results/`. Re-ran tests — configuration warning no longer appears.
+
+- **Debugging Outcome:**
+
+  **Helped:** The warning text explicitly named both conflicting paths, making the root cause clear. Using `playwright-report` (Playwright default) is the standard fix and avoids nesting the report inside artifact output.
+
+  **Misled:** None — the warning was accurate and the one-line config change resolved it without affecting test logic.
+
+---
+
+## Session Summary (HTML Reporter Fix)
+
+| Metric | Value |
+|--------|-------|
+| Issue | HTML reporter nested inside `test-results/` |
+| Config change | `outputFolder: 'playwright-report'` in `playwright.config.ts` |
+| Tests affected | None (9/9 still passing) |
+| Warning after fix | Resolved |
+
+**Key takeaway:** Keep HTML report output (`playwright-report/`) separate from Playwright artifact output (`test-results/`) to prevent report regeneration from wiping failure screenshots and traces.
+
+---
+
+## Entry 14 — Full Suite Run for Fresh HTML Report
+
+- **Prompt:**
+
+  ```
+  npx playwright test
+  ```
+
+- **AI Response Summary:**
+
+  Ran the full Playwright suite (`npx playwright test`) to regenerate a fresh HTML report after the reporter path fix in Entry 13. Result: **9/9 passed** (~13s) with 5 workers.
+
+  | Project | Tests | Result |
+  |---------|-------|--------|
+  | **API** | 4 | All passed |
+  | **UI** | 5 | All passed |
+
+  **API:** API-AUTH-001 (smoke login), API-CART-001 (smoke cart), API-PRD-001 (smoke products), API-AUTH-011 (E2E login → profile → logout).
+
+  **UI:** REG-001, REG-009, LOGIN-001, LOGIN-002 (smoke), REG-002 (regression).
+
+  Fresh HTML report written to `playwright-report/index.html`. No configuration warning — `playwright-report` remains separate from `test-results/`.
+
+- **Debugging Outcome:**
+
+  **Helped:** Running the full suite (not a smoke-only grep) confirmed all API and UI cases pass together and produced an up-to-date report for review.
+
+  **Misled:** None — all tests green; reporter path fix from Entry 13 held.
